@@ -25,7 +25,11 @@ Rails.application.routes.draw do
   namespace :enterprise do
     namespace :v1 do
       resources :employees, only: %i[show destroy]
-      resources :companies
+      
+      resources :companies, param: :company_id, only: %i[show, update destroy]
+      scope 'companies/:company_id', shallow: true do
+        resources :recruitments
+      end
       resources :occupation_main_categories, only: :index
       resources :industry_categories, only: :index
       resources :prefectures, only: :index
