@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_09_102553) do
+ActiveRecord::Schema.define(version: 2021_03_09_074222) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -119,8 +119,34 @@ ActiveRecord::Schema.define(version: 2020_11_09_102553) do
     t.index ["name"], name: "index_prefectures_on_name", unique: true
   end
 
+  create_table "recruitments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "title", null: false, comment: "タイトル"
+    t.uuid "company_id"
+    t.uuid "occupation_id"
+    t.uuid "industry_id"
+    t.uuid "workplace_id"
+    t.text "job_description", comment: "仕事内容"
+    t.text "work_conditions", comment: "労働条件"
+    t.text "qualification_requirement", comment: "応募条件"
+    t.text "is_public", comment: "公開しているかどうか"
+    t.uuid "employment_status_id"
+    t.text "status", comment: "ステータス"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["company_id"], name: "index_recruitments_on_company_id"
+    t.index ["employment_status_id"], name: "index_recruitments_on_employment_status_id"
+    t.index ["industry_id"], name: "index_recruitments_on_industry_id"
+    t.index ["occupation_id"], name: "index_recruitments_on_occupation_id"
+    t.index ["workplace_id"], name: "index_recruitments_on_workplace_id"
+  end
+
   add_foreign_key "employees", "companies"
   add_foreign_key "industries", "industry_categories"
   add_foreign_key "occupation_sub_categories", "occupation_main_categories"
   add_foreign_key "occupations", "occupation_sub_categories"
+  add_foreign_key "recruitments", "companies"
+  add_foreign_key "recruitments", "employment_statuses"
+  add_foreign_key "recruitments", "industries"
+  add_foreign_key "recruitments", "occupations"
+  add_foreign_key "recruitments", "prefectures", column: "workplace_id"
 end
